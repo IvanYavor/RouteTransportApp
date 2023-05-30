@@ -1,6 +1,6 @@
 const express = require("express");
 
-const Tranport = require("../controllers/transport");
+const Transport = require("../controllers/transport");
 const Route = require("../controllers/route");
 
 const router = express.Router();
@@ -13,7 +13,7 @@ router.delete("/routes/:routeId", Route.deleteRoute);
 router.post("/routes/:routeId/tranports/:tranportId", Route.apointTransport);
 
 // transports
-router.get("/trasports", Tranport.get);
-router.post("/trasports", Tranport.create);
+router.get("/transports", Transport.get);
+router.post("/transports", Transport.create);
 
 module.exports = router;
