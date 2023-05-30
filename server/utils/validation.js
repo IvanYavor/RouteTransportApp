@@ -78,9 +78,9 @@ const createRouteValidate = (data) => {
 };
 
 const createTransportValidate = (data) => {
-  const { numberPlate, status, model, purchaseDate, mileage, type } = data;
+  const { plateNumber, status, model, purchaseDate, mileage, type } = data;
 
-  if (!validateNumberPlate(numberPlate)) return false;
+  if (!validateNumberPlate(plateNumber)) return false;
 
   if (!validateValueInEnum(transportStatusEnum, status)) return false;
 
@@ -91,6 +91,8 @@ const createTransportValidate = (data) => {
   if (!validateNumber(mileage)) return false;
 
   if (!validateValueInEnum(transportTypeEnum, type)) return false;
+
+  return true;
 };
 
 module.exports = {
