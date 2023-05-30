@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const Transport = new Schema({
-  plateNumber: { type: Schema.Types.String, required: true },
+  plateNumber: { type: Schema.Types.String, unique: true, required: true },
   status: {
     type: Schema.Types.String,
     enum: ["AVAILABLE", "UNAVAILABLE"],
