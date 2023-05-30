@@ -1,8 +1,9 @@
-const mongoose = require("mongoose");
-
 const Transport = require("../models/transport");
-
 const { createTransportValidate } = require("../utils/validation");
+
+const getTransportByPlateNumber = async (plateNumber) => {
+  return await Transport.findOne({ plateNumber });
+};
 
 const create = async (req, res) => {
   const body = req.body;
@@ -20,23 +21,39 @@ const create = async (req, res) => {
     });
   }
 
+  // TODO check if transport already exists
+  const existingTransport = await getTransportByPlateNumber(body.plateNumber);
+  if (existingTransport)
+    return res
+      .status(400)
+      .json({ error: "Transport with that plate number already exists." });
+
   const transport = new Transport(body);
 
   if (!transport) {
     return res.status(400).json({ error: "Invalid transport" });
   }
 
-  const result = await transport.save();
+  try {
+    const result = await transport.save();
 
-  return res.status(201).json({
-    result,
-    message: "Transport created!",
-  });
+    return res.status(201).json({
+      result,
+      message: "Transport created!",
+    });
+  } catch (err) {
+    return res
+      .status(400)
+      .json({ message: "Failed to create transport", error: err.message });
+  }
 };
 
 const get = async (req, res) => {};
 
+const list = async (req, res) => {};
+
 module.exports = {
   create,
   get,
+  list,
 };
