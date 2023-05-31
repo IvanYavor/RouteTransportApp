@@ -4,4 +4,11 @@ const transportTypeEnum = ["CAR", "TRUCK"];
 
 const transportStatusEnum = ["AVAILABLE", "UNAVAILABLE"];
 
-module.exports = { statusEnum, transportStatusEnum, transportTypeEnum };
+const TRANSPORT_AVAILABLE = "AVAILABLE";
+
+module.exports = {
+  statusEnum,
+  transportStatusEnum,
+  transportTypeEnum,
+  TRANSPORT_AVAILABLE,
+};
