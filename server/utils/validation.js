@@ -77,6 +77,49 @@ const createRouteValidate = (data) => {
   return true;
 };
 
+const updateRouteValidate = (data) => {
+  const {
+    startCity,
+    endCity,
+    distance,
+    dispatchDate,
+    executionDate,
+    transportType,
+    expectedPay,
+    transportId,
+    status,
+  } = data;
+
+  if (
+    (startCity && !validateCity(startCity)) ||
+    (endCity && !validateCity(endCity))
+  ) {
+    return false;
+  }
+
+  if (distance && !validateNumber(distance)) return false;
+
+  if (
+    (executionDate && !validateDate(executionDate)) ||
+    (dispatchDate && !validateDate(dispatchDate))
+  )
+    return false;
+
+  if (transportId && !validateId(transportId)) return false;
+
+  if (expectedPay && !validateNumber(expectedPay)) return false;
+
+  if (
+    (transportType && !validateValueInEnum(transportTypeEnum, transportType)) ||
+    (status && !validateValueInEnum(statusEnum, status))
+  )
+    return false;
+
+  return true;
+
+  return true;
+};
+
 const createTransportValidate = (data) => {
   const { plateNumber, status, model, purchaseDate, mileage, type } = data;
 
@@ -98,4 +141,6 @@ const createTransportValidate = (data) => {
 module.exports = {
   createRouteValidate,
   createTransportValidate,
+  updateRouteValidate,
+  validateId,
 };
