@@ -5,6 +5,7 @@ const {
   updateRouteValidate,
   validateId,
 } = require("../utils/validation");
+const { TRANSPORT_AVAILABLE } = require("../utils/constants");
 
 const getTransport = async (id) => {
   return await Transport.findOne({ _id: id });
@@ -33,6 +34,12 @@ const create = async (req, res) => {
     });
   }
 
+  if (transport.status !== TRANSPORT_AVAILABLE) {
+    return res.status(400).json({
+      error: "This transport is not available",
+    });
+  }
+
   const route = new Route(body);
 
   if (!route) {
@@ -56,7 +63,7 @@ const create = async (req, res) => {
 const get = async (req, res) => {
   const body = req.body;
 
-  const isValid = await validateId(body.id);
+  const isValid = validateId(body.id);
   if (!isValid) {
     return res.status(400).json({ error: "Invalid id" });
   }
@@ -91,7 +98,6 @@ const update = async (req, res) => {
     });
   }
 
-  // TODO doesn't work
   const isValidBody = updateRouteValidate(body);
   if (!isValidBody) {
     return res.status(400).json({
@@ -104,6 +110,12 @@ const update = async (req, res) => {
     if (!transport) {
       return res.status(400).json({
         error: "Transport with transportId does not exist",
+      });
+    }
+
+    if (transport.status !== TRANSPORT_AVAILABLE) {
+      return res.status(400).json({
+        error: "This transport is not available",
       });
     }
   }
@@ -123,7 +135,7 @@ const update = async (req, res) => {
 const deleteRoute = async (req, res) => {
   const body = req.body;
 
-  const isValid = await validateId(body.id);
+  const isValid = validateId(body.id);
   if (!isValid) {
     return res.status(400).json({ error: "Invalid id" });
   }
@@ -145,13 +157,10 @@ const deleteRoute = async (req, res) => {
   }
 };
 
-const apointTransport = async (req, res) => {};
-
 module.exports = {
   create,
   get,
   list,
   update,
   deleteRoute,
-  apointTransport,
 };
