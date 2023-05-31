@@ -116,8 +116,6 @@ const updateRouteValidate = (data) => {
     return false;
 
   return true;
-
-  return true;
 };
 
 const createTransportValidate = (data) => {
@@ -138,9 +136,28 @@ const createTransportValidate = (data) => {
   return true;
 };
 
+const updateTransportValidate = (data) => {
+  const { plateNumber, status, model, purchaseDate, mileage, type } = data;
+
+  if (plateNumber && !validateNumberPlate(plateNumber)) return false;
+
+  if (status && !validateValueInEnum(transportStatusEnum, status)) return false;
+
+  if (model && !validateModel(model)) return false;
+
+  if (purchaseDate && !validateDate(purchaseDate)) return false;
+
+  if (mileage && !validateNumber(mileage)) return false;
+
+  if (type && !validateValueInEnum(transportTypeEnum, type)) return false;
+
+  return true;
+};
+
 module.exports = {
   createRouteValidate,
   createTransportValidate,
   updateRouteValidate,
+  updateTransportValidate,
   validateId,
 };
