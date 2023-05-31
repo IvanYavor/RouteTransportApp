@@ -54,16 +54,16 @@ const create = async (req, res) => {
 };
 
 const get = async (req, res) => {
-  const body = req.body;
+  const id = req.params.id;
 
-  const isValid = validateId(body.id);
+  const isValid = validateId(id);
   if (!isValid) {
     return res.status(400).json({ error: "Invalid id" });
   }
 
   try {
-    const transport = await Transport.findOne({ _id: body.id });
-    return res.status(200).json({ transport });
+    const transport = await Transport.findOne({ _id: id });
+    return res.status(200).json({ data: transport });
   } catch (err) {
     return res
       .status(400)
@@ -74,7 +74,7 @@ const get = async (req, res) => {
 const list = async (req, res) => {
   try {
     const transports = await Transport.find({ __v: 0 });
-    return res.status(200).json({ transports });
+    return res.status(200).json({ data: transports });
   } catch (err) {
     return res.status(400).json({
       message: "Failed to get list of transports",
@@ -102,7 +102,9 @@ const update = async (req, res) => {
   try {
     const id = body.id;
     delete body.id;
-    const transport = await Transport.findOneAndUpdate({ _id: id }, body);
+    const transport = await Transport.findOneAndUpdate({ _id: id }, body, {
+      new: true,
+    });
     return res.status(200).json({ transport });
   } catch (err) {
     return res
@@ -112,14 +114,14 @@ const update = async (req, res) => {
 };
 
 const deleteTransport = async (req, res) => {
-  const body = req.body;
+  const id = req.params.id;
 
-  const isValid = validateId(body.id);
+  const isValid = validateId(id);
   if (!isValid) {
     return res.status(400).json({ error: "Invalid id" });
   }
 
-  const transportExist = await Transport.findOne({ _id: body.id });
+  const transportExist = await Transport.findOne({ _id: id });
   if (!transportExist) {
     return res.status(400).json({
       error: "Transport does not exist",
@@ -127,11 +129,11 @@ const deleteTransport = async (req, res) => {
   }
 
   try {
-    const deleted = await Transport.findOneAndDelete({ _id: body.id });
+    const deleted = await Transport.findOneAndDelete({ _id: id });
 
     await Route.updateMany({ transportId: deleted._id }, { transportId: null });
     return res.status(204).json({
-      route: deleted,
+      transport: deleted,
     });
   } catch (err) {
     return res.status(400).json({ error: err.message });

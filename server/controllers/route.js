@@ -61,16 +61,16 @@ const create = async (req, res) => {
 };
 
 const get = async (req, res) => {
-  const body = req.body;
+  const id = req.params.id;
 
-  const isValid = validateId(body.id);
+  const isValid = validateId(id);
   if (!isValid) {
     return res.status(400).json({ error: "Invalid id" });
   }
 
   try {
-    const route = await Route.findOne({ _id: body.id });
-    return res.status(200).json({ route });
+    const route = await Route.findOne({ _id: id });
+    return res.status(200).json({ data: route });
   } catch (err) {
     return res
       .status(400)
@@ -81,7 +81,7 @@ const get = async (req, res) => {
 const list = async (req, res) => {
   try {
     const routes = await Route.find({ __v: 0 });
-    return res.status(200).json({ routes });
+    return res.status(200).json({ data: routes });
   } catch (err) {
     return res
       .status(400)
@@ -123,7 +123,9 @@ const update = async (req, res) => {
   try {
     const id = body.id;
     delete body.id;
-    const route = await Route.findOneAndUpdate({ _id: id }, body);
+    const route = await Route.findOneAndUpdate({ _id: id }, body, {
+      new: true,
+    });
     return res.status(200).json({ route });
   } catch (err) {
     return res
@@ -133,14 +135,15 @@ const update = async (req, res) => {
 };
 
 const deleteRoute = async (req, res) => {
-  const body = req.body;
+  // TODO get id from header
+  const id = req.params.id;
 
-  const isValid = validateId(body.id);
+  const isValid = validateId(id);
   if (!isValid) {
     return res.status(400).json({ error: "Invalid id" });
   }
 
-  const routeExist = await Route.findOne({ _id: body.id });
+  const routeExist = await Route.findOne({ _id: id });
   if (!routeExist) {
     return res.status(400).json({
       error: "Route does not exist",
@@ -148,7 +151,7 @@ const deleteRoute = async (req, res) => {
   }
 
   try {
-    const deleted = await Route.deleteOne({ _id: body.id });
+    const deleted = await Route.deleteOne({ _id: id });
     return res.status(204).json({
       route: deleted,
     });
