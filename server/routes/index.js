@@ -6,14 +6,15 @@ const Route = require("../controllers/route");
 const router = express.Router();
 
 // routes
-router.get("/routes", Route.get);
-router.post("/routes", Route.create);
-router.put("/routes/:routeId", Route.update);
-router.delete("/routes/:routeId", Route.deleteRoute);
-router.post("/routes/:routeId/tranports/:tranportId", Route.apointTransport);
+router.get("/route", Route.get);
+router.get("/routes", Route.list);
+router.post("/route", Route.create);
+router.patch("/route", Route.update);
+router.delete("/route", Route.deleteRoute);
+router.post("/route/:routeId/tranports/:tranportId", Route.apointTransport);
 
 // transports
-router.get("/transports", Transport.get);
-router.post("/transports", Transport.create);
+router.get("/transport", Transport.get);
+router.post("/transport", Transport.create);
 
 module.exports = router;
