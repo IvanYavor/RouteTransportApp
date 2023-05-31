@@ -1,6 +1,10 @@
 const Route = require("../models/route");
 const Transport = require("../models/transport");
-const { createRouteValidate } = require("../utils/validation");
+const {
+  createRouteValidate,
+  updateRouteValidate,
+  validateId,
+} = require("../utils/validation");
 
 const getTransport = async (id) => {
   return await Transport.findOne({ _id: id });
@@ -49,17 +53,104 @@ const create = async (req, res) => {
   }
 };
 
-const get = async (req, res) => {};
+const get = async (req, res) => {
+  const body = req.body;
 
-const update = async (req, res) => {};
+  const isValid = await validateId(body.id);
+  if (!isValid) {
+    return res.status(400).json({ error: "Invalid id" });
+  }
 
-const deleteRoute = async (req, res) => {};
+  try {
+    const route = await Route.findOne({ _id: body.id });
+    return res.status(200).json({ route });
+  } catch (err) {
+    return res
+      .status(400)
+      .json({ message: "Failed to get route", error: err.message });
+  }
+};
+
+const list = async (req, res) => {
+  try {
+    const routes = await Route.find({ __v: 0 });
+    return res.status(200).json({ routes });
+  } catch (err) {
+    return res
+      .status(400)
+      .json({ message: "Failed to get list of routes", error: err.message });
+  }
+};
+
+const update = async (req, res) => {
+  const body = req.body;
+
+  if (!body) {
+    return res.status(400).json({
+      error: "You must provide a body",
+    });
+  }
+
+  // TODO doesn't work
+  const isValidBody = updateRouteValidate(body);
+  if (!isValidBody) {
+    return res.status(400).json({
+      error: "Validation failed",
+    });
+  }
+
+  if (body.transportId) {
+    const transport = await getTransport(body.transportId);
+    if (!transport) {
+      return res.status(400).json({
+        error: "Transport with transportId does not exist",
+      });
+    }
+  }
+
+  try {
+    const id = body.id;
+    delete body.id;
+    const route = await Route.findOneAndUpdate({ _id: id }, body);
+    return res.status(200).json({ route });
+  } catch (err) {
+    return res
+      .status(400)
+      .json({ message: "Failed to update route", error: err.message });
+  }
+};
+
+const deleteRoute = async (req, res) => {
+  const body = req.body;
+
+  const isValid = await validateId(body.id);
+  if (!isValid) {
+    return res.status(400).json({ error: "Invalid id" });
+  }
+
+  const routeExist = await Route.findOne({ _id: body.id });
+  if (!routeExist) {
+    return res.status(400).json({
+      error: "Route does not exist",
+    });
+  }
+
+  try {
+    const deleted = await Route.deleteOne({ _id: body.id });
+    return res.status(204).json({
+      route: deleted,
+    });
+  } catch (err) {
+    return res.status(400).json({ error: err.message });
+  }
+};
 
 const apointTransport = async (req, res) => {};
 
 module.exports = {
   create,
   get,
+  list,
   update,
   deleteRoute,
   apointTransport,
