@@ -16,11 +16,11 @@
       </div>
       <div>
         <label for="dispatchDate">Dispatch Date</label>
-        <input type="date" id="dispatchDate" v-model="route.dispatchDate.split('T')[0]" required>
+        <input type="date" id="dispatchDate" v-model="route.dispatchDate" required>
       </div>
       <div>
         <label for="executionDate">Execution Date</label>
-        <input type="date" id="executionDate" v-model="route.executionDate.split('T')[0]" required>
+        <input type="date" id="executionDate" v-model="route.executionDate" required>
       </div>
       <div>
         <label for="transportType">Transport Type</label>
@@ -56,6 +56,11 @@
 <script>
 import axios from 'axios';
 
+console.log("VUE_APP_API_URL", process.env.VUE_APP_API_URL)
+const api = axios.create({
+  baseURL: process.env.VUE_APP_API_URL,
+});
+
 export default {
   data() {
     return {
@@ -90,7 +95,7 @@ export default {
   },
   methods: {
     fetchRoute(id) {
-      axios.get(`http://localhost:3000/api/route/${id}`)
+      api.get(`route/${id}`)
         .then((response) => {
           this.route = response.data.data;
         })
@@ -100,7 +105,7 @@ export default {
         });
     },
     fetchTransports() {
-      axios.get('http://localhost:3000/api/transports')
+      api.get('transports')
         .then((response) => {
           this.transports = response.data.data;
         })
@@ -117,7 +122,7 @@ export default {
       }
     },
     createRoute() {
-      axios.post('http://localhost:3000/api/route', this.route)
+      api.post('route', this.route)
         .then(() => {
           this.$router.push('/routes');
         })
@@ -127,7 +132,7 @@ export default {
         });
     },
     updateRoute() {
-      axios.patch(`http://localhost:3000/api/route`, { ...this.route, id: this.route._id })
+      api.patch(`route`, { ...this.route, id: this.route._id })
         .then(() => {
           this.$router.push('/routes');
         })

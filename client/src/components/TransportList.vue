@@ -37,6 +37,9 @@
 
 <script>
 import axios from 'axios';
+const api = axios.create({
+  baseURL: process.env.VUE_APP_API_URL,
+});
 
 export default {
   data() {
@@ -50,7 +53,7 @@ export default {
   },
   methods: {
     fetchTransports() {
-      axios.get('http://localhost:3000/api/transports')
+      api.get('transports')
         .then((response) => {
           this.transports = response.data.data;
         })
@@ -65,7 +68,7 @@ export default {
     },
     deleteTransport(id) {
       if (confirm('Are you sure you want to delete this transport?')) {
-        axios.delete(`http://localhost:3000/api/transport/${id}`)
+        api.delete(`transport/${id}`)
           .then(() => {
             this.fetchTransports();
           })

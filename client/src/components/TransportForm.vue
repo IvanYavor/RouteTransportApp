@@ -19,7 +19,7 @@
       </div>
       <div>
         <label for="purchaseDate">Purchase Date</label>
-        <input type="date" id="purchaseDate" v-model="transport.purchaseDate.split('T')[0]" required>
+        <input type="date" id="purchaseDate" v-model="transport.purchaseDate" required>
       </div>
       <div>
         <label for="mileage">Mileage</label>
@@ -42,6 +42,9 @@
 
 <script>
 import axios from 'axios';
+const api = axios.create({
+  baseURL: process.env.VUE_APP_API_URL,
+});
 
 export default {
   data() {
@@ -72,7 +75,7 @@ export default {
   },
   methods: {
     fetchTransport(id) {
-      axios.get(`http://localhost:3000/api/transport/${id}`)
+      api.get(`transport/${id}`)
         .then((response) => {
           this.transport = response.data.data;
         })
@@ -89,7 +92,7 @@ export default {
       }
     },
     createTransport() {
-      axios.post('http://localhost:3000/api/transport', this.transport)
+      api.post('transport', this.transport)
         .then(() => {
           this.$router.push('/transports');
         })
@@ -99,7 +102,7 @@ export default {
         });
     },
     updateTransport() {
-      axios.patch(`http://localhost:3000/api/transport`, { ...this.transport, id: this.transport._id })
+      api.patch(`transport`, { ...this.transport, id: this.transport._id })
         .then(() => {
           this.$router.push('/transports');
         })

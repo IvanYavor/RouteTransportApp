@@ -41,6 +41,11 @@
 
 <script>
 import axios from 'axios';
+console.log("VUE_APP_API_URL", process.env.VUE_APP_API_URL)
+const api = axios.create({
+  baseURL: process.env.VUE_APP_API_URL,
+});
+
 
 export default {
   data() {
@@ -54,7 +59,7 @@ export default {
   },
   methods: {
     fetchRoutes() {
-      axios.get("http://localhost:3000/api/routes")
+      api.get("routes")
         .then((response) => {
           console.log(response);
           this.routes = response.data.data;
@@ -70,7 +75,7 @@ export default {
     },
     deleteRoute(id) {
       if (confirm('Are you sure you want to delete this route?')) {
-        axios.delete(`http://localhost:3000/api/route/${id}`)
+        api.delete(`route/${id}`)
           .then(() => {
             this.fetchRoutes();
           })
